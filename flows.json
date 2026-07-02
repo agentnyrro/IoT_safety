@@ -1,0 +1,169 @@
+[
+    {
+        "id": "7e45e8e59640628a",
+        "type": "tab",
+        "label": "IOT Project",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "82284b6fe8c2bf7b",
+        "type": "mqtt in",
+        "z": "7e45e8e59640628a",
+        "name": "",
+        "topic": "esp32/pir/status",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "d14fd02d4ae4888c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 160,
+        "wires": [
+            [
+                "d837295507225275",
+                "601122c5b467ab5d"
+            ]
+        ]
+    },
+    {
+        "id": "d837295507225275",
+        "type": "function",
+        "z": "7e45e8e59640628a",
+        "name": "motion detect",
+        "func": "\n\nif (msg.topic == \"esp32/pir/status\") {\n    if (msg.payload == \"motion_detected\")\n        global.set('motion_value', 1);\n    else if (msg.payload == \"no_motion\")\n        global.set('motion_value', 0);\n} \nmsg.payload = global.get('motion_value');\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nglobal.set('motion_value', 0);",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 200,
+        "wires": [
+            [
+                "b924e2b319833bf0"
+            ]
+        ]
+    },
+    {
+        "id": "b924e2b319833bf0",
+        "type": "influxdb out",
+        "z": "7e45e8e59640628a",
+        "influxdb": "11295d77a616aa86",
+        "name": "",
+        "measurement": "motion",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "iotprojekt",
+        "bucket": "bucket",
+        "x": 640,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "601122c5b467ab5d",
+        "type": "debug",
+        "z": "7e45e8e59640628a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "87416e0e32420b93",
+        "type": "inject",
+        "z": "7e45e8e59640628a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "d837295507225275"
+            ]
+        ]
+    },
+    {
+        "id": "d14fd02d4ae4888c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "11295d77a616aa86",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "database",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "12b08a6199375bd7",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-influxdb": "0.7.0"
+        }
+    }
+]
